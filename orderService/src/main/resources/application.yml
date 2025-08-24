@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: orderService
+
+  datasource:
+    url: jdbc:postgresql://localhost:67/orders_db     #orders_db is the name of the database
+    username: postgres
+    password: changeinprod!
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update     #spring will create/update tables automatically based on the entity classes
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true

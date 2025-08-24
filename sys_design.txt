@@ -1,0 +1,46 @@
+                ┌────────────────────────────────────┐
+                │            Internet/User           │
+                └────────────────────────────────────┘
+                               │ HTTPS
+                               ▼
+                     ┌───────────────────┐
+                     │  AWS ALB (HTTP/S) │
+                     └───────────────────┘
+                               │
+                ┌──────────────┴──────────────┐
+                ▼                             ▼
+     ┌─────────────────────┐        ┌─────────────────────┐
+     │ API Gateway/Edge    │        │  Public Frontend    │  (optional)
+     │ Spring Boot (REST)  │        │  (if any)           │
+     └─────────────────────┘        └─────────────────────┘
+                │
+                ▼
+     ┌─────────────────────┐
+     │  Order Service      │───write→ RDS (PostgreSQL)
+     │  (Spring Boot)      │───cache→ Redis (ElastiCache)
+     │  Produces to Kafka  │───store→ S3 (invoices/receipts)
+     └─────────────────────┘
+                │  Kafka (MSK)
+                ▼
+   ┌─────────────────────┬─────────────────────┬─────────────────────┐
+   │ Payment Service     │ Inventory Service   │ Notification Service │
+   │ (Spring Boot)       │ (Spring Boot)       │ (Spring Boot)       │
+   │ Consumes & Produces │ Consumes & Produces │ Consumes            │
+   └─────────────────────┴─────────────────────┴─────────────────────┘
+                │                                   │
+        updates status → Redis (ElastiCache)        │ send e-mail/SMS via SES/SNS
+                │                                   │
+                └──────────────► API reads fast from Redis ◄──────────────┘
+
+Observability (VPC private subnet):
+- Spring Boot Micrometer → Prometheus (EC2/ECS)
+- Kafka JMX Exporter + Redis Exporter → Prometheus
+- Grafana (EC2/ECS) dashboards & alerts
+- CloudWatch logs for all services
+
+
+com.ayushc.orderService
+ ├── controller   (for REST controllers)
+ ├── entity       (for JPA entities)
+ ├── repository   (for JPA repositories)
+ └── service      (optional, for business logic)
