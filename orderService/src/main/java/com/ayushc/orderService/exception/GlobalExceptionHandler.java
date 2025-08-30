@@ -19,7 +19,8 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)   //general fallback
+    //general fallback
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseResponse<NullType>> handleGeneral(Exception ex) {
         return new ResponseEntity<>(
                 new BaseResponse<>(null, ex.getMessage(), 500, "Unexpected error"),
