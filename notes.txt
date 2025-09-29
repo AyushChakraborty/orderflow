@@ -12,3 +12,12 @@ repositories should be thin, services like controller classes should contain the
 
 Mockito is used to create mock objects so that they can be tested in isolation
 
+
+java does not store the param names unless the -parameter flag is present during compiling,
+hence after compilation, method looks like this to spring
+    public ResponseEntity<BaseResponse<Order>> getOrder(String arg0)
+
+so to ensure that spring knows to which param the url id must bind to, mention
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse<Order>> getOrder(@PathVariable("id") String id) { ... }
+mention @PathVariable("id") for the bind

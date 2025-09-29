@@ -1,5 +1,7 @@
     This is an order tracking platform
 
+orderService: kafka producer
+
                 ┌────────────────────────────────────┐
                 │            Internet/User           │
                 └────────────────────────────────────┘

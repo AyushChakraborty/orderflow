@@ -1,0 +1,47 @@
+entities are the db schema representation and DTOs are the API contract representation
+
+now involving kafka, where we can publish an event to a message broker, and other services
+subscribe and react
+
+kafka is a distributed, durable event log, where consumers can read at their own pace
+
+docker-compose up -d
+
+to stop and remove the containers defined in the docker compose file
+docker-compose down
+
+to just stop them
+docker-compose stop
+
+to remove the volumes too
+docker-compose down -v
+
+
+wrt kafka
+
+topic: message queue itself
+producer: sends messages to the topic
+consumer: reads messages from the topic
+broker: kafka server, in this case, localhost:9092
+zookeeper: coordinates kafka brokers
+
+the kafka process starts up within the docker container, and it needs to bind to port 9092
+since it needs to comm with other processes and clients, not necessarily the processes from the
+same container
+
+
+to enter a container, do
+docker exec -it kafka bash
+
+where kafka is the name of the process here, and it means that we attach a new bash process to
+the container, so its like a new process is opened up within the container, hence when this
+bash process actually runs, we can interact with the container, this can be seen here:
+
+   [appuser@kafka ~]$ ps
+     PID TTY          TIME CMD
+     151 pts/0    00:00:00 bash
+     167 pts/0    00:00:00 ps
+the bash is the process just started in the container, and the way we are able to access it from
+the host is the -it flag, where -i means interactive, keeping the STDIN open, and -t means open
+a pseudo-TTY session. Docker sets up pipes between the host terminal and the stdin/stdout of the
+bash process
