@@ -10,7 +10,7 @@
     <packaging>pom</packaging> <!-- parent aggregator -->
 
     <modules>
-        <module>order-events</module>
+        <module>orderEvents</module>
         <module>orderService</module>
     </modules>
 </project>

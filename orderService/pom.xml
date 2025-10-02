@@ -85,7 +85,7 @@
 
 		<dependency>
 			<groupId>com.ayushc</groupId>
-			<artifactId>order-events</artifactId>
+			<artifactId>orderEvents</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>

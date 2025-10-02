@@ -1,21 +1,32 @@
 custom exception handlers throw the exceptions to spring, and global exception handlers returns
 the response in a format defined by the dev.
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 when the controller methods return the Order object, spring passes it to jackson, which serialises
 it to json and returns that to the end user. So the fields of the entity become the fields of the
 json object
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 if ResponseEntity<T> object is returned from the controller methods, then the header, status can be
 controlled, but
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 repositories should be thin, services like controller classes should contain the business logic
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 Mockito is used to create mock objects so that they can be tested in isolation
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 java does not store the param names unless the -parameter flag is present during compiling,
 hence after compilation, method looks like this to spring
     public ResponseEntity<BaseResponse<Order>> getOrder(String arg0)
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 so to ensure that spring knows to which param the url id must bind to, mention
     @GetMapping("/{id}")

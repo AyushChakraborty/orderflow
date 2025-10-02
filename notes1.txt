@@ -1,7 +1,11 @@
 entities are the db schema representation and DTOs are the API contract representation
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 now involving kafka, where we can publish an event to a message broker, and other services
 subscribe and react
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 kafka is a distributed, durable event log, where consumers can read at their own pace
 
@@ -16,6 +20,7 @@ docker-compose stop
 to remove the volumes too
 docker-compose down -v
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 wrt kafka
 
@@ -29,6 +34,7 @@ the kafka process starts up within the docker container, and it needs to bind to
 since it needs to comm with other processes and clients, not necessarily the processes from the
 same container
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 to enter a container, do
 docker exec -it kafka bash
@@ -45,3 +51,25 @@ the bash is the process just started in the container, and the way we are able t
 the host is the -it flag, where -i means interactive, keeping the STDIN open, and -t means open
 a pseudo-TTY session. Docker sets up pipes between the host terminal and the stdin/stdout of the
 bash process
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+orderService here is a producer microservice
+
+within this, config class configures the kafka infra, which in this case are the different topics,
+and the event producer class actually sends the events
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+while setting up the config for kafka, we look at partitions and replicas
+
+also a single topic is set up to avoid risk of cross topic order issues
+
+the events get sent to 1 of n partitions based on the key's hash. In this case, the key is the
+id of the event. So events with the same event id always go to the same partition for that
+topic. Hence, the order is maintained
+
+replicas ensure that the events data themselves present in multiple partitions of topics
+are present as copies in many brokers (basically nodes in distributed systems here are called
+brokers)
+

@@ -9,7 +9,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>order-events</artifactId>
+    <artifactId>orderEvents</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
