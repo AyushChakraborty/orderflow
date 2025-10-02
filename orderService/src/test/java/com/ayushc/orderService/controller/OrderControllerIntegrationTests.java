@@ -23,7 +23,7 @@ public class OrderControllerIntegrationTests {
                 {
                     "id": "123",
                     "itemName": "drone",
-                    "status": "out for delivery"
+                    "status": "shipped"
                 }
                 """;
 
@@ -34,7 +34,7 @@ public class OrderControllerIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value("Order created successfully"))
                 .andExpect(jsonPath("$.data.itemName").value("drone"))
-                .andExpect(jsonPath("$.data.status").value("out for delivery"));
+                .andExpect(jsonPath("$.data.status").value("shipped"));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class OrderControllerIntegrationTests {
                 {
                     "id": "200",
                     "itemName": "keyboard",
-                    "status": "packed"
+                    "status": "placed"
                 }
                 """;
 
@@ -92,7 +92,7 @@ public class OrderControllerIntegrationTests {
                 {
                     "id": "400",
                     "itemName": "book",
-                    "status": "order placed"
+                    "status": "placed"
                 }
                 """;
 
@@ -141,7 +141,7 @@ public class OrderControllerIntegrationTests {
                 {
                     "id": "600",
                     "itemName": "tablet",
-                    "status": "processing"
+                    "status": "placed"
                 }
                 """;
 

@@ -1,10 +1,11 @@
 package com.ayushc.orderService.controller;
 
 import com.ayushc.orderService.dto.BaseResponse;
+import com.ayushc.orderService.dto.OrderRequestDTO;
 import com.ayushc.orderService.entity.Order;
 import com.ayushc.orderService.exception.OrderNotFoundException;
 import com.ayushc.orderService.repository.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,9 @@ public class OrderController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<BaseResponse<Order>> createOrder(@RequestBody Order order) {
+    public ResponseEntity<BaseResponse<Order>> createOrder(@Valid @RequestBody OrderRequestDTO dto) {
+        Order order = new Order(dto.id(), dto.itemName(), dto.status());
+
         Order saved = repo.save(order);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -41,7 +44,7 @@ public class OrderController {
 
     // READ ONE
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse<Order>> getOrder(@PathVariable String id) {
+    public ResponseEntity<BaseResponse<Order>> getOrder(@PathVariable("id") String id) {
         Order order = repo.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
         return ResponseEntity.ok(
                 new BaseResponse<>(order, "Order found", 200, "Fetched order by ID")
@@ -50,12 +53,12 @@ public class OrderController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse<Order>> updateOrder(@PathVariable String id,
-                                                           @RequestBody Order updatedOrder) {
+    public ResponseEntity<BaseResponse<Order>> updateOrder(@PathVariable("id") String id,
+                                                           @Valid @RequestBody OrderRequestDTO updatedDto) {
         Order existing = repo.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
 
-        existing.setItemName(updatedOrder.getItemName());
-        existing.setStatus(updatedOrder.getStatus());
+        existing.setItemName(updatedDto.itemName());
+        existing.setStatus(updatedDto.status());
 
         Order saved = repo.save(existing);
 
@@ -66,7 +69,7 @@ public class OrderController {
 
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse<Void>> deleteOrder(@PathVariable String id) {
+    public ResponseEntity<BaseResponse<Void>> deleteOrder(@PathVariable("id") String id) {
         if (!repo.existsById(id)) {
             throw new OrderNotFoundException(id);
         }
