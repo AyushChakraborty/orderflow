@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
-//setting up the kafka topics pertaining to order creation, updation, deletion
+//setting up the kafka topic pertaining to order creation, updation, deletion
+//all will go to only one topic
 
 @Configuration
 public class KafkaTopicConfig {

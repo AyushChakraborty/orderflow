@@ -1,7 +1,6 @@
 package com.ayushc.orderEvents;
 
-public record OrderEvent(
-        String eventType,
+public record OrderCreatedEvent(
         String orderId,
         String itemName,
         String status,

@@ -1,7 +1,9 @@
 package com.ayushc.orderService.controller;
 
+import com.ayushc.orderEvents.*;
 import com.ayushc.orderService.dto.BaseResponse;
 import com.ayushc.orderService.dto.OrderRequestDTO;
+import com.ayushc.orderService.service.OrderEventProducer;
 import com.ayushc.orderService.entity.Order;
 import com.ayushc.orderService.exception.OrderNotFoundException;
 import com.ayushc.orderService.repository.OrderRepository;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -17,10 +20,13 @@ import java.util.List;
 public class OrderController {
 
     private final OrderRepository repo;
+    private final OrderEventProducer producer;
 
-    public OrderController(OrderRepository repo) {
+    public OrderController(OrderRepository repo, OrderEventProducer producer) {
         this.repo = repo;
+        this.producer = producer;
     }
+
 
     // CREATE
     @PostMapping
@@ -28,7 +34,17 @@ public class OrderController {
         Order order = new Order(dto.id(), dto.itemName(), dto.status());
 
         Order saved = repo.save(order);
-        return ResponseEntity
+
+        //writing to postgres is done, now publish to kafka topic
+        OrderCreatedEvent event = new OrderCreatedEvent(
+                saved.getId(),
+                saved.getItemName(),
+                saved.getStatus(),
+                Instant.now().toString()
+        );
+        producer.publishEvent(event.orderId(), event);  //publish to kafka topic, where key is the id
+
+        return ResponseEntity  //return status to the client
                 .status(HttpStatus.CREATED)
                 .body(new BaseResponse<>(saved, "Order created successfully", 201, "Saved in DB"));
     }
@@ -62,6 +78,16 @@ public class OrderController {
 
         Order saved = repo.save(existing);
 
+        OrderUpdatedEvent event = new OrderUpdatedEvent(
+                saved.getId(),
+                existing.getItemName(),
+                saved.getItemName(),
+                existing.getStatus(),
+                saved.getStatus(),
+                Instant.now().toString()
+        );
+        producer.publishEvent(event.orderId(), event);
+
         return ResponseEntity.ok(
                 new BaseResponse<>(saved, "Order updated successfully", 200, "Updated in DB")
         );
@@ -70,9 +96,15 @@ public class OrderController {
     // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Void>> deleteOrder(@PathVariable("id") String id) {
-        if (!repo.existsById(id)) {
-            throw new OrderNotFoundException(id);
-        }
+        Order toDelete = repo.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        //before actually deleting from postgres publish the delete event to the topic
+        OrderDeletedEvent event = new OrderDeletedEvent(
+                toDelete.getId(),
+                toDelete.getItemName(),
+                toDelete.getStatus(),
+                Instant.now().toString()
+        );
+        producer.publishEvent(event.orderId(), event);
         repo.deleteById(id);
         return ResponseEntity.ok(
                 new BaseResponse<>(null, "Order deleted successfully", 200, "Removed from DB")
