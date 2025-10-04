@@ -32,3 +32,33 @@ so to ensure that spring knows to which param the url id must bind to, mention
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<Order>> getOrder(@PathVariable("id") String id) { ... }
 mention @PathVariable("id") for the bind
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@Bean is a method level annotation used inside a @Configuration class, that marks the return
+value of that method as a bean and tells spring to manage it
+
+@Configuration and @Service are class level annotations, tells spring to discover and
+instantiate the class automatically during component scanning
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+"mvn clean install" from order_tracking builds all the modules (events + service)
+"mvn spring-boot:run" runs the individual service
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+to get a clean start
+
+# Clean absolutely everything
+mvn clean
+
+# Delete stale compiled files manually
+rm -rf orderEvents/target
+rm -rf orderService/target
+rm -rf ~/.m2/repository/com/ayushc/order-events
+
+# Now reinstall everything fresh
+mvn install -DskipTests
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

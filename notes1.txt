@@ -73,3 +73,7 @@ replicas ensure that the events data themselves present in multiple partitions o
 are present as copies in many brokers (basically nodes in distributed systems here are called
 brokers)
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+if a class only has one constructor, spring automatically uses it for dependency injection
+

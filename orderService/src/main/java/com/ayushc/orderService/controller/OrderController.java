@@ -42,7 +42,7 @@ public class OrderController {
                 saved.getStatus(),
                 Instant.now().toString()
         );
-        producer.publishEvent(event.orderId(), event);  //publish to kafka topic, where key is the id
+        producer.publishEvent(saved.getId(), event);  //publish to kafka topic, where key is the id
 
         return ResponseEntity  //return status to the client
                 .status(HttpStatus.CREATED)
@@ -86,7 +86,7 @@ public class OrderController {
                 saved.getStatus(),
                 Instant.now().toString()
         );
-        producer.publishEvent(event.orderId(), event);
+        producer.publishEvent(saved.getId(), event);
 
         return ResponseEntity.ok(
                 new BaseResponse<>(saved, "Order updated successfully", 200, "Updated in DB")
@@ -104,7 +104,7 @@ public class OrderController {
                 toDelete.getStatus(),
                 Instant.now().toString()
         );
-        producer.publishEvent(event.orderId(), event);
+        producer.publishEvent(toDelete.getId(), event);
         repo.deleteById(id);
         return ResponseEntity.ok(
                 new BaseResponse<>(null, "Order deleted successfully", 200, "Removed from DB")
