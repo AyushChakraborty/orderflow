@@ -1,6 +1,8 @@
 .idea/
-order-events/target
+orderEvents/target
 orderService/target
+notificationService/target
 orderService/.mvn/
 orderService/mvnw
 orderService/mvnw.cmd
+how_to_operate.txt

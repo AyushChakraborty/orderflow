@@ -1,0 +1,47 @@
+here how to get it all working (atleast the backend for now)
+
+spin up all the containers(postgresql, kafka, zookeeper)
+```
+docker-compose up -d
+```
+
+start both the services (Order and Notification)
+```
+mvn spring-boot:run
+```
+
+and thats it, send a curl req to the /orders endpoint
+
+```
+> curl -X POST http://localhost:8080/orders \
+-H "Content-Type: application/json" \
+-d '{"id": "2", "itemName": "AirPods", "status": "shipped"}'
+```
+
+and the result is seen from the appropriate method in the order controller
+
+```
+{"data":{"id":"2","itemName":"AirPods","status":"shipped","createdAt":"2025-10-19T21:40:59.534841"},"message":"Order created successfully","status":201,"details":"Saved in DB"}%
+```
+
+to see the info getting saved in the postgresql db
+enter the container first, then login to the user and go to the intended db
+```
+docker exec -it order_db psql -U postgres -d orders_db
+```
+
+see the tables
+```
+SELECT * FROM orders
+```
+
+to see the kafka broker
+```
+docker exec -it kafka bash
+```
+
+this enters the kafka bash, then see all the events published to the topic with the kafka
+consumer tool
+```
+kafka-console-consumer --bootstrap-server localhost:9092 --topic orders --from-beginning
+```

@@ -4,6 +4,7 @@ import com.ayushc.orderService.dto.BaseResponse;
 import com.ayushc.orderService.dto.OrderRequestDTO;
 import com.ayushc.orderService.entity.Order;
 import com.ayushc.orderService.repository.OrderRepository;
+import com.ayushc.orderService.service.OrderEventProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,12 +25,15 @@ public class OrderControllerTests {
     //since the controller class is not static, as it depends on the OrderRepository interface
     //hence, we make a mock order repository and then inject that mock into the controller
 
+    @Mock
+    private OrderEventProducer producer;
 
     @Mock
     private OrderRepository repo;
 
     @InjectMocks
     private OrderController controller;      //inject the above mock here
+
 
     @BeforeEach
     void setup() {
@@ -136,9 +140,9 @@ public class OrderControllerTests {
 
     @Test
     public void deleteOrderTest() {
+        Order order = new Order("1", "drone", "placed");
 
-        //unit tests must mock every repo call made by the controller method
-        when(repo.existsById("1")).thenReturn(true);
+        when(repo.findById("1")).thenReturn(Optional.of(order));
         doNothing().when(repo).deleteById("1");
 
         ResponseEntity<BaseResponse<Void>> response = controller.deleteOrder("1");
@@ -147,12 +151,13 @@ public class OrderControllerTests {
         assertEquals(200, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Order deleted successfully", response.getBody().message());
 
-        verify(repo, times(1)).deleteById("1");
+        verify(repo).findById("1");
+        verify(repo).deleteById("1");
     }
 
     @Test
     public void deleteOrderNotFoundTest() {
-        when(repo.existsById("5")).thenReturn(false);
+        when(repo.findById("5")).thenReturn(Optional.empty());
 
         try {
             controller.deleteOrder("5");
@@ -160,7 +165,7 @@ public class OrderControllerTests {
             assertEquals("Order with ID 5 not found", ex.getMessage());
         }
 
-        verify(repo).existsById("5");
+        verify(repo).findById("5");
         verify(repo, never()).deleteById("5");
     }
 
